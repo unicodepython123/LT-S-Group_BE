@@ -11,7 +11,7 @@
 // Module của thư viện express sẽ được định nghĩa trong dependencies, giúp các lập trình viên
 // có thể install lại module để sử dụng khi clone từ các repo trực tuyến (khi khi up code lên thì nó không ip node_modules)
 
-// thêm framework express vào trong chương trình
+// thêm thưc viện express vào trong chương trình
 // gán biến express để lưu trử dữ liệu
 // thư viên express là một trong những thư viện có trong framework expressjs
 const express = require('express')
@@ -49,6 +49,7 @@ const port = 3000
 // cấu trúc của 1 query params
 // /abc?abcrfr=ef&rfhru=rfurh
 
+// auto acess data from file in node.js and rewrite file
 let users = [
   {
     id: 1,
@@ -76,10 +77,14 @@ let users = [
 // 2. Phần header được cấu hình như thế nào, cần đảm bảo những thông tin gì
 // 3. Phần body được cấu hình như thế nào, cần những thông tin gì cho xử lý logic
 
+// Là 2 middlerware dùng để tiền xử lý, cụ thể: 
+app.use(express.urlencoded())     // Xử lý dữ liệu lấy từ form html
+app.use(express.json())           // Xử lý dữ liệu từ thư viện như fetch hoặc các ứng dụng như postman
+
 // API 1: lấy tất cả user
 app.get('/users',(req,res) => { 
   console.log("API lấy thông tin tất cả") 
-  console.log(users)
+  res.send(users)
 })
 
 // API 2: lấy chi tiết user
@@ -87,7 +92,7 @@ app.get('/users/:id', (req,res) => {
     for (let i = 0; i < users.length; i = i + 1) {
       if (req.params.id == users[i].id) {
         console.log('API lấy thông tin chi tiết')
-        console.log(users[i])
+        res.send(users[i])
       }
     }  
 })
@@ -96,12 +101,14 @@ app.get('/users/:id', (req,res) => {
 app.post('/users/add', (req,res) => {
   // gán lại thông tin cho newuser
   let newuser = {
+    // Dữ liệu trong body sẽ chưa có nếu không dùng middleware
     id: req.body.id,
     name: req.body.name,
     age: req.body.age
   }
   users.push(newuser)
   console.log("Đã thêm user")
+  res.send(req.body)
 })
 
 // API 4: cập nhật thông tin user
@@ -114,6 +121,7 @@ app.put('/users/update/:id', (req,res) => {
   if (index !== -1) {
     users[index] = updatedUser
     console.log(`Đã cập nhật user có id ${userId}`)
+    res.send(req.body)
   }
 })
 
@@ -124,10 +132,17 @@ app.delete('/users/delete/:id', (req, res) => {
   if (index !== -1) {
     users.splice(index, 1)
     console.log(`Đã xóa user có id ${userId}`)
+    res.send(users)
   }
+})
+
+app.get('/users/ngu', (req,res) => {
+  res.send("Vao day la ngu")
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+
 
